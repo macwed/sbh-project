@@ -1,0 +1,10 @@
+/build/
+/bin/
+*.o
+*.exe
+CMakeFiles/
+CMakeCache.txt
+*.user
+*.log
+.idea/
+

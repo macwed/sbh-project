@@ -1,0 +1,4 @@
+/home/maciej/CLionProjects/sbh_instance_gen/cmake-build-debug/CMakeFiles/sbh_instance_generator.dir
+/home/maciej/CLionProjects/sbh_instance_gen/cmake-build-debug/CMakeFiles/test.dir
+/home/maciej/CLionProjects/sbh_instance_gen/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/maciej/CLionProjects/sbh_instance_gen/cmake-build-debug/CMakeFiles/rebuild_cache.dir
