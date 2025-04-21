@@ -1,9 +1,0 @@
-# ninja log v6
-1102	1429	1745228409801081722	/home/maciej/CLionProjects/sbh_instance_gen/bin/sbh_instance_generator	5e1cac6b3e372a9f
-5	10373	1745228166805298823	CMakeFiles/sbh_instance_generator.dir/src/cli.cpp.o	53cebe4996d7f517
-7	2209	1745228166807298830	CMakeFiles/sbh_instance_generator.dir/src/io.cpp.o	33f728241ea17544
-4	1102	1745228408703078184	CMakeFiles/sbh_instance_generator.dir/src/runner.cpp.o	b22f0d78a9e4682b
-4	2435	1745228353787901248	CMakeFiles/sbh_instance_generator.dir/src/instgen.cpp.o	880a289aa0ea1575
-8	1203	1745228353790901257	CMakeFiles/sbh_instance_generator.dir/src/main.cpp.o	8ee5a6d66098b822
-5	59	1745228680366117898	build.ninja	aa1e5678881762b5
-1	36	1745228680366117898	build.ninja	71a55060240dce1c
