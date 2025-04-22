@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(sbh_instance_generator
+project(sbh-project
         VERSION 2.0.0
         LANGUAGES CXX
 )
@@ -15,14 +15,22 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 file(GLOB SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
-add_executable(${PROJECT_NAME} ${SRCS})
-
-target_include_directories(${PROJECT_NAME}
-        PRIVATE
+add_executable(generator
+        src/generator/main.cpp
+        src/generator/cli.cpp
+        src/generator/runner.cpp
+        src/generator/instgen.cpp
+        src/generator/io.cpp
+)
+target_include_directories(generator PRIVATE
         ${PROJECT_SOURCE_DIR}/include
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
+target_include_directories(generator PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+)
+
+set_target_properties(generator PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 enable_testing()

@@ -2,12 +2,12 @@
 // Created by maciej on 20.04.25.
 //
 
-#include "runner.hpp"
+#include "../include/generator/runner.hpp"
 
-#include <cli.hpp>
-#include <io.hpp>
+#include "../include/generator/io.hpp"
 #include <random>
-#include <instgen.hpp>
+#include "../include/generator/instgen.hpp"
+#include "../include/generator/cli.hpp"
 
 namespace runner {
     void runSingle(const cli::Config& cfg) {

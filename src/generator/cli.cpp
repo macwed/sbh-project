@@ -2,9 +2,9 @@
 // Created by maciej on 18.04.25.
 //
 
-#include "cli.hpp"
+#include "../include/generator/cli.hpp"
 
-#include <../include/cxxopts.hpp>
+#include <../include/generator/cxxopts.hpp>
 #include <iostream>
 
 namespace cli {

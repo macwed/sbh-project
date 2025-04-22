@@ -2,7 +2,7 @@
 // Created by maciej on 14.04.25.
 //
 
-#include "../include/instgen.hpp"
+#include "../include/generator/instgen.hpp"
 
 #include <algorithm>
 #include <random>

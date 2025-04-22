@@ -1,8 +1,8 @@
 #include <iostream>
 #include <ostream>
 
-#include "cli.hpp"
-#include "runner.hpp"
+#include "../include/generator/cli.hpp"
+#include "../include/generator/runner.hpp"
 
 int main(int argc, char* argv[]) {
     try {
