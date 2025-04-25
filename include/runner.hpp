@@ -4,7 +4,7 @@
 
 #ifndef RUNNER_HPP
 #define RUNNER_HPP
-#include <cli.hpp>
+#include "cli.hpp"
 
 namespace runner {
     void runSingle(const cli::Config& cfg);
