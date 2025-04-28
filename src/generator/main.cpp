@@ -1,8 +1,8 @@
 #include <iostream>
 #include <ostream>
 
-#include "cli.hpp"
-#include "runner.hpp"
+#include "generator/cli.hpp"
+#include "generator/runner.hpp"
 
 int main(int argc, char* argv[]) {
     try {
@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
         if (cfg.mode == cli::Config::Single) {
             runner::runSingle(cfg);
         } else {
-            runner::runFull();
+            runner::runFull(cfg);
         }
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;

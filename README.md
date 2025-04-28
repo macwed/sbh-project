@@ -7,5 +7,5 @@ mkdir build && cd build
 cmake ..
 make
 
-./sbh_instance_generator --mode single --size 500 --lmer 10
-./sbh_instance_generator --mode full
+./generator --mode single --size 500 --lmer 10
+./generator --mode full

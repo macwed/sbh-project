@@ -1,14 +1,12 @@
 /build/
 /bin/
-/cmake-build-debug/
 /CMakeFiles/
-/CMakeCache.txt
-cmake_install.cmake
+/cmake-build-debug/
+/Makefile
 *.ninja
-build.ninja
+/data/
+/results/
 .idea/
-*.user
+/*.user
 *.log
-*.o
-*.obj
 
