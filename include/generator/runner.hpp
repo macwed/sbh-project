@@ -8,7 +8,7 @@
 
 namespace runner {
     void runSingle(const cli::Config& cfg);
-    void runFull();
+    void runFull(const cli::Config& cfg);
 }
 
 #endif //RUNNER_HPP

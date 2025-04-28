@@ -2,7 +2,7 @@
 // Created by maciej on 15.04.25.
 //
 
-#include "../include/generator/io.hpp"
+#include "generator/io.hpp"
 
 #include <fstream>
 #include <vector>

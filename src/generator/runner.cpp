@@ -1,15 +1,17 @@
 //
 // Created by maciej on 20.04.25.
 //
-
-#include "../include/generator/runner.hpp"
-
-#include "../include/generator/io.hpp"
 #include <random>
-#include "../include/generator/instgen.hpp"
-#include "../include/generator/cli.hpp"
+#include <filesystem>
+#include <omp.h>
+#include "generator/runner.hpp"
+#include "generator/io.hpp"
+#include "generator/instgen.hpp"
+#include "generator/cli.hpp"
 
 namespace runner {
+    namespace fs = std::filesystem;
+
     void runSingle(const cli::Config& cfg) {
         std::mt19937 gen(std::random_device{}());
         std::string sequence;
@@ -30,47 +32,53 @@ namespace runner {
         io::writeInstance(sequence, spectrum, cfg.n, cfg.k, cfg.negErr, cfg.posErr);
     }
 
-    void runFull() {
-        const int instanceCount = 50;
-        std::random_device rd;
+    void runFull(const cli::Config& cfg) {
 
-        for (int nVal = 250; nVal <= 700; nVal += 50) {
-            for (int i = 0; i < instanceCount; ++i) {
-                std::mt19937 gen(rd());
-                std::string sequence;
-                sequence.reserve(nVal);
-                instgen::generate_zero_error_sequence(nVal, 7, gen, sequence);
+        const fs::path baseDir = cfg.outputDir.empty()
+          ? "test_instances"
+          : cfg.outputDir;
+        fs::create_directories(baseDir);
 
-                for (int kVal = 7; kVal <= 10; ++kVal) {
+        #pragma omp parallel for schedule(dynamic, 1) default(none) shared(cfg, baseDir)
+        for (int inst = 1; inst <= cfg.instanceCount; ++inst) {
+            std::random_device rd;
+            std::mt19937 gen(rd() + inst + omp_get_thread_num());
+            std::ostringstream oss;
+            oss << "instance_" << std::setw(2) << std::setfill('0') << inst;
+            fs::path instDir = baseDir / oss.str();
+            fs::create_directory(instDir);
+
+            for (int n = cfg.minN; n <= cfg.maxN; n += cfg.stepN) {
+                fs::path nDir = instDir / ("n" + std::to_string(n));
+                fs::create_directory(nDir);
+
+                std::string seq;
+                instgen::generate_zero_error_sequence(n, cfg.kMin, gen, seq);
+
+                for (int k = cfg.kMin; k <= cfg.kMax; ++k) {
+                    fs::path kDir = nDir / ("k" + std::to_string(k) + "/");
+                    fs::create_directory(kDir);
+
                     std::vector<std::string> spectrum;
-                    spectrum.reserve(nVal - kVal + 1);
-                    instgen::generate_spectrum_from_sequence(kVal, sequence, spectrum);
-                    io::writeInstance(sequence, spectrum, nVal, kVal, 0, 0);
-                }
+                    instgen::generate_spectrum_from_sequence(k, seq, spectrum);
+                    io::write_to_file_sequence(seq, (kDir).string());
+                    io::write_to_file_spectrum(spectrum, n, k, 0, 0,
+                                               (kDir).string());
 
-                for (int kVal = 7; kVal <= 10; ++kVal) {
-                    std::vector<std::string> baseSpectrum;
-                    baseSpectrum.reserve(nVal - kVal + 1);
-                    instgen::generate_spectrum_from_sequence(kVal, sequence, baseSpectrum);
-                    int total = static_cast<int>(baseSpectrum.size());
-                    for (int percent = 2; percent <= 18; percent += 2) {
-                        int errCount = static_cast<int>((percent / 100.0) * total);
-                        auto spec = baseSpectrum;
-                        instgen::add_negative_errors(spec, sequence, errCount, gen);
-                        io::writeInstance(sequence, spec, nVal, kVal, errCount, 0);
-                    }
-                }
+                    double total = static_cast<double>(spectrum.size());
+                    for (int pct = cfg.errorStep; pct <= cfg.errorMax; pct += cfg.errorStep) {
 
-                for (int kVal = 7; kVal <= 10; ++kVal) {
-                    std::vector<std::string> baseSpectrum;
-                    baseSpectrum.reserve(nVal - kVal + 1);
-                    instgen::generate_spectrum_from_sequence(kVal, sequence, baseSpectrum);
-                    int total = static_cast<int>(baseSpectrum.size());
-                    for (int percent = 2; percent <= 18; percent += 2) {
-                        int errCount = static_cast<int>((percent / 100.0) * total);
-                        auto spec = baseSpectrum;
-                        instgen::add_positive_errors(spec, errCount, gen);
-                        io::writeInstance(sequence, spec, nVal, kVal, 0, errCount);
+                        int errCount = static_cast<int>((pct/100.0) * total);
+
+                        auto specNeg = spectrum;
+                        instgen::add_negative_errors(specNeg, seq, errCount, gen);
+                        io::write_to_file_spectrum(specNeg, n, k, errCount, 0,
+                                                   (kDir).string());
+
+                        auto specPos = spectrum;
+                        instgen::add_positive_errors(specPos, errCount, gen);
+                        io::write_to_file_spectrum(specPos, n, k, 0, errCount,
+                                                   (kDir).string());
                     }
                 }
             }
