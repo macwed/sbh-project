@@ -12,7 +12,7 @@
 using vs = std::vector<std::string>;
 namespace fs = std::filesystem;
 namespace io {
-    void read_from_file(const std::string& filename, std::string& main_sequence) {
+    void readFromFile(const std::string& filename, std::string& main_sequence) {
         std::ifstream file(filename);
         if (!file.is_open()) {
             throw std::runtime_error("Nie mozna odczytac pliku z sekwencja");
@@ -21,7 +21,7 @@ namespace io {
         file.close();
     }
 
-    void write_to_file_sequence(const std::string& main_sequence, const std::string& filepath) {
+    void writeToFileSequence(const std::string& main_sequence, const std::string& filepath) {
         std::string filename = filepath + std::to_string(main_sequence.size()) + "_seq.txt";
         std::ofstream file2(filename);
         if (!file2.is_open()) {
@@ -31,7 +31,7 @@ namespace io {
         file2.close();
     }
 
-    void write_to_file_spectrum(const vs& spectrum, int n, int k, int negative_errors,
+    void writeToFileSpectrum(const vs& spectrum, int n, int k, int negative_errors,
                                 int positive_errors, const std::string& filepath) {
 
         std::string filename = filepath + std::to_string(n) + "_" + std::to_string(k)
@@ -50,7 +50,7 @@ namespace io {
     void writeInstance(const std::string& sequence,
                        const std::vector<std::string>& spectrum,
                        int n, int k, int negErr, int posErr) {
-        write_to_file_sequence(sequence, "");
-        write_to_file_spectrum(spectrum, n, k, negErr, posErr, "");
+        writeToFileSequence(sequence, "");
+        writeToFileSpectrum(spectrum, n, k, negErr, posErr, "");
     }
 }

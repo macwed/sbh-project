@@ -10,12 +10,12 @@
 namespace io {
     using vs = std::vector<std::string>;
 
-    void read_from_file(const std::string& filename, std::string& main_sequence);
+    void readFromFile(const std::string& filename, std::string& main_sequence);
 
-    void write_to_file_spectrum(const vs& spectrum, int n, int k, int negative_errors,
+    void writeToFileSpectrum(const vs& spectrum, int n, int k, int negative_errors,
                                 int positive_errors, const std::string& filepath);
 
-    void write_to_file_sequence(const std::string& main_sequence, const std::string& filepath);
+    void writeToFileSequence(const std::string& main_sequence, const std::string& filepath);
 
     void writeInstance(const std::string& sequence,
                        const std::vector<std::string>& spectrum,

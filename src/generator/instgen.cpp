@@ -14,7 +14,7 @@ namespace instgen {
     using sv = std::vector<std::string>;
     using umap = std::unordered_map<std::string, int>;
 
-    void generate_zero_error_sequence(int n, int k, std::mt19937& gen, std::string& sequence) {
+    void generateZeroErrorSequence(int n, int k, std::mt19937& gen, std::string& sequence) {
 
         std::string acgt = {"ACGT"};
         std::uniform_int_distribution<size_t> dis(0, acgt.size() - 1);
@@ -42,7 +42,7 @@ namespace instgen {
         } while (is_negative_error);
     }
 
-    void generate_random_sequence (int n, std::mt19937& gen, std::string& sequence) {
+    void generateRandomSequence (int n, std::mt19937& gen, std::string& sequence) {
         std::string acgt = {"ACGT"};
         std::uniform_int_distribution<size_t> dis(0, acgt.size() - 1);
         for (int i = 0; i < n; i++) {
@@ -50,14 +50,14 @@ namespace instgen {
         }
     }
 
-    void generate_spectrum_from_sequence(int k, const std::string& sequence, sv& spectrum) {
+    void generateSpectrumFromSequence(int k, const std::string& sequence, sv& spectrum) {
         for (size_t i = 0; i <= sequence.length() - k; i++) {
             spectrum.emplace_back(sequence.substr(i, k));
         }
         std::ranges::sort(spectrum);
     }
 
-    void add_negative_errors(sv& spectrum, const std::string& sequence, int negative_errors_int, std::mt19937& gen) {
+    void addNegativeErrors(sv& spectrum, const std::string& sequence, int negative_errors_int, std::mt19937& gen) {
 
 
         umap check_negative_errors;
@@ -77,7 +77,7 @@ namespace instgen {
         }
     }
 
-    void add_positive_errors (sv& spectrum, int positive_errors_int, std::mt19937& gen) {
+    void addPositiveErrors (sv& spectrum, int positive_errors_int, std::mt19937& gen) {
 
         std::string acgt = {"ACGT"};
         for (int i = 0; i < positive_errors_int; i++) {

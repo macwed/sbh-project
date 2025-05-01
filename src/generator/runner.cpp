@@ -16,17 +16,17 @@ namespace runner {
         std::mt19937 gen(std::random_device{}());
         std::string sequence;
         sequence.reserve(cfg.n);
-        instgen::generate_random_sequence(cfg.n, gen, sequence);
+        instgen::generateRandomSequence(cfg.n, gen, sequence);
 
         std::vector<std::string> spectrum;
         spectrum.reserve(cfg.n - cfg.k + 1);
-        instgen::generate_spectrum_from_sequence(cfg.k, sequence, spectrum);
+        instgen::generateSpectrumFromSequence(cfg.k, sequence, spectrum);
 
         if (cfg.negErr > 0) {
-            instgen::add_negative_errors(spectrum, sequence, cfg.negErr, gen);
+            instgen::addNegativeErrors(spectrum, sequence, cfg.negErr, gen);
         }
         if (cfg.posErr > 0) {
-            instgen::add_positive_errors(spectrum, cfg.posErr, gen);
+            instgen::addPositiveErrors(spectrum, cfg.posErr, gen);
         }
 
         io::writeInstance(sequence, spectrum, cfg.n, cfg.k, cfg.negErr, cfg.posErr);
@@ -53,16 +53,16 @@ namespace runner {
                 fs::create_directory(nDir);
 
                 std::string seq;
-                instgen::generate_zero_error_sequence(n, cfg.kMin, gen, seq);
+                instgen::generateZeroErrorSequence(n, cfg.kMin, gen, seq);
 
                 for (int k = cfg.kMin; k <= cfg.kMax; ++k) {
                     fs::path kDir = nDir / ("k" + std::to_string(k) + "/");
                     fs::create_directory(kDir);
 
                     std::vector<std::string> spectrum;
-                    instgen::generate_spectrum_from_sequence(k, seq, spectrum);
-                    io::write_to_file_sequence(seq, (kDir).string());
-                    io::write_to_file_spectrum(spectrum, n, k, 0, 0,
+                    instgen::generateSpectrumFromSequence(k, seq, spectrum);
+                    io::writeToFileSequence(seq, (kDir).string());
+                    io::writeToFileSpectrum(spectrum, n, k, 0, 0,
                                                (kDir).string());
 
                     double total = static_cast<double>(spectrum.size());
@@ -71,13 +71,13 @@ namespace runner {
                         int errCount = static_cast<int>((pct/100.0) * total);
 
                         auto specNeg = spectrum;
-                        instgen::add_negative_errors(specNeg, seq, errCount, gen);
-                        io::write_to_file_spectrum(specNeg, n, k, errCount, 0,
+                        instgen::addNegativeErrors(specNeg, seq, errCount, gen);
+                        io::writeToFileSpectrum(specNeg, n, k, errCount, 0,
                                                    (kDir).string());
 
                         auto specPos = spectrum;
-                        instgen::add_positive_errors(specPos, errCount, gen);
-                        io::write_to_file_spectrum(specPos, n, k, 0, errCount,
+                        instgen::addPositiveErrors(specPos, errCount, gen);
+                        io::writeToFileSpectrum(specPos, n, k, 0, errCount,
                                                    (kDir).string());
                     }
                 }
