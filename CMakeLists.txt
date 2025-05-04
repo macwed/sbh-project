@@ -18,14 +18,12 @@ find_package(OpenMP REQUIRED)
 
 add_library(common
         src/common/graph.cpp
-        test/test_graph.cpp
-        # możesz tu dorzucić src/common/io.cpp, dijkstra.cpp itd.
 )
 target_include_directories(common
         PUBLIC
         ${PROJECT_SOURCE_DIR}/include
 )
-# tu można dodać target_link_libraries(common PUBLIC ...)
+# target_link_libraries(common PUBLIC OpenMP::OpenMP_CXX)
 
 # —————— Generator ——————
 add_executable(generator
@@ -49,13 +47,33 @@ set_target_properties(generator PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
 )
 
+# —————— Greedy Solver ——————
+add_executable(greedy_solver
+        src/greedy-solver/greedy.cpp
+        include/greedy-solver/greedy.hpp
+
+)
+target_include_directories(greedy_solver
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(greedy_solver
+        PRIVATE
+        common
+)
+set_target_properties(greedy_solver PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
+)
+
+# —————— Tests ——————
 enable_testing()
-# --- test_graph target ---
+
 add_executable(test_graph
         test/test_graph.cpp
         src/common/graph.cpp
 )
-target_include_directories(test_graph PRIVATE
+target_include_directories(test_graph
+        PRIVATE
         ${PROJECT_SOURCE_DIR}/include
 )
 add_test(NAME GraphTest COMMAND test_graph)
