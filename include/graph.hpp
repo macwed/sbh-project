@@ -17,15 +17,15 @@ namespace graph {
         adj_list adj_;
         std::vector<int> out_degree1_;
       public:
-        explicit Graph(int node_count = 0);
+        explicit Graph(unsigned int node_count = 0);
 
         void addEdge(unsigned int u, unsigned int v, unsigned int w);
 
+        [[nodiscard]] int nodeDegree(int u) const;
+
         void build(const std::vector<std::string>& spectrum);
 
-        void resize(size_t node_count);
-
-        void clear();
+        void resize(int node_count);
 
         [[nodiscard]] const std::vector<std::pair<int, int>>& neighbors(int u) const;
 
