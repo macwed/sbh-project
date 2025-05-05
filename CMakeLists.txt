@@ -18,6 +18,7 @@ find_package(OpenMP REQUIRED)
 
 add_library(common
         src/common/graph.cpp
+        src/common/dijkstra.cpp
 )
 target_include_directories(common
         PUBLIC
