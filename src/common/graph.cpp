@@ -9,7 +9,6 @@
 
 namespace graph {
 
-    static constexpr int MAX_WEIGHT = 3;
     Graph::Graph(unsigned int node_count)
         : adj_(node_count), out_degree1_(node_count, 0) {
         for (auto& v : adj_) v.reserve(10);
@@ -50,6 +49,7 @@ namespace graph {
         for (int i = 0; i < n; ++i) {
             auto base_i = views[i].data();
             for (int j = 0; j < n; ++j) {
+                if (i == j) continue;
                 auto base_j = views[j].data();
                 for (int w = 1; w <= MAX_WEIGHT; ++w) {
                     if (std::string_view(base_i + w, k - w) == std::string_view(base_j, k - w)) {
@@ -65,5 +65,10 @@ namespace graph {
         return adj_[u];
     }
 
-
+    int Graph::weight(int u, int dest) const {
+        for (auto [v, w] : neighbors(u)) {
+            if (dest == v) return w;
+        }
+        return 0;
+    }
 }

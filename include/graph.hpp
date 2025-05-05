@@ -11,6 +11,7 @@
 
 namespace graph {
     using adj_list = std::vector<std::vector<std::pair<int,int>>>;
+    static constexpr int MAX_WEIGHT = 3;
 
     class Graph {
       private:
@@ -30,6 +31,8 @@ namespace graph {
         [[nodiscard]] const std::vector<std::pair<int, int>>& neighbors(int u) const;
 
         [[nodiscard]] int size() const;
+
+        [[nodiscard]] int Graph::weight(int u, int dest) const;
         };
     };
 
