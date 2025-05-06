@@ -33,6 +33,8 @@ namespace graph {
         [[nodiscard]] int size() const;
 
         [[nodiscard]] int Graph::weight(int u, int dest) const;
+
+        [[nodiscard]] bool Graph::hasEdge(int u, int dest) const;
         };
     };
 

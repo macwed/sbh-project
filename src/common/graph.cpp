@@ -3,6 +3,8 @@
 //
 
 #include "graph.hpp"
+
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <string_view>
@@ -70,5 +72,11 @@ namespace graph {
             if (dest == v) return w;
         }
         return 0;
+    }
+
+    bool Graph::hasEdge(int u, int dest) const {
+        return std::ranges::any_of(adj_[u], [dest](const auto& edge) {
+            return edge.first == dest;
+        });
     }
 }
