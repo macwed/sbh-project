@@ -4,17 +4,16 @@
 #include "dijkstra.hpp"
 
 #include <algorithm>
-#include <limits>
 #include <queue>
 
 #include "graph.hpp"
 
 using Pair = std::pair<int, int>;
 
-constexpr int INF = std::numeric_limits<int>::max();
-
 //Dijkstra algorithm including visited nodes
 std::vector<int> dijkstraPath(const graph::Graph& g, int src, int dest) {
+
+    if (src == dest) return {src};
 
     int n = g.size();
     std::vector<int> dist (n, INF);
@@ -49,6 +48,8 @@ std::vector<int> dijkstraPath(const graph::Graph& g, int src, int dest) {
 
 //Dijkstra algorithm through unvisited nodes
 std::vector<int> dijkstraPath (const graph::Graph& g, int src, int dest, const std::vector<char>& visited) {
+
+    if (src == dest) return {src};
 
     int n = g.size();
     std::vector<int> dist (n, INF);
@@ -148,6 +149,7 @@ void finishRemaining (std::vector<int>& path, const graph::Graph& g,
         int visited_count = static_cast<int>(std::ranges::count(visited, true));
         if (static_cast<double> (visited_count) / n >= finish_ratio) break;
 
+        //try to find path through all remaining unvisited nodes only
         auto [dist, prev] = dijkstraAll(g, current, visited);
 
         int best_u = -1;
@@ -159,6 +161,7 @@ void finishRemaining (std::vector<int>& path, const graph::Graph& g,
             }
         }
 
+        //can't find path through unvisited nodes - run Dijkstra algorithm including visited nodes
         if (best_u == -1 || best_dist == INF) {
             std::tie(dist, prev) = dijkstraAll(g, current);
             for (int u : remaining) {

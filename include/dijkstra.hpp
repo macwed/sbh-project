@@ -8,6 +8,7 @@
 
 #include "graph.hpp"
 
+constexpr int INF = std::numeric_limits<int>::max();
 
 std::vector<int> dijkstraPath(const graph::Graph& g, int src, int dest);
 
