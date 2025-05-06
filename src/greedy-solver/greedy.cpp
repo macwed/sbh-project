@@ -11,13 +11,17 @@
 #include "graph.hpp"
 #include "dijkstra.hpp"
 
+static constexpr int NUM_CANDIDATES = 5;
+static constexpr double TOLERANCE = 1.2;
+static constexpr double FINISH_RATIO = 0.95;
+
 using graph::Graph;
 
 std::vector<int> greedySolver(const Graph& g, int start) {
 
     int n = g.size();
     std::vector<int> path;
-    std::vector<bool> visited(n, false);
+    std::vector<char> visited(n, false);
     int path_size = static_cast<int>(TOLERANCE * n);
     path.reserve(path_size);
     int current = start;
@@ -72,10 +76,10 @@ std::vector<int> greedySolver(const Graph& g, int start) {
         subpath.reserve(n / 10);
         if (chosen == -1) {
             int best_u = -1;
-            int best_dist = std::numeric_limits<int>::max();
+            int best_dist = INF;
             for (int u : candidates) {
                 auto sp = dijkstraPath(g, current, u, visited);
-                int dist = pathWeight(g, sp);
+                int dist = computePathWeight(g, sp);
                 if (!sp.empty() && dist < best_dist) {
                     best_u = u;
                     best_dist = dist;
@@ -94,14 +98,15 @@ std::vector<int> greedySolver(const Graph& g, int start) {
 
         int visited_count = static_cast<int>(std::ranges::count(visited, true));
         if (1.0 * visited_count / n >= FINISH_RATIO) {
-            //finishRemaining;
+            finishRemaining(path, g, visited, FINISH_RATIO);
+            break;
         }
     }
 
     return path;
 }
 
-std::vector<int> unvisitedNeighbors(const Graph& g, int u, int weight, const std::vector<bool>& visited) {
+std::vector<int> unvisitedNeighbors(const Graph& g, int u, int weight, const std::vector<char>& visited) {
     std::vector<int> unv_neighbors;
     for (auto [v, w] : g.neighbors(u)) {
         if (!visited[v] && w == weight) unv_neighbors.push_back(v);
@@ -109,21 +114,14 @@ std::vector<int> unvisitedNeighbors(const Graph& g, int u, int weight, const std
     return unv_neighbors;
 }
 
-int pathWeight(const Graph& g, const std::vector<int>& path_vector) {
-    if (path_vector.size() < 2) {
-        throw std::invalid_argument("Path vector is empty");
-    }
+int computePathWeight(const Graph& g, const std::vector<int>& path_vector) {
+    if (path_vector.size() < 2) return INF;
     int path_weight = 0;
 
     for (int i = 0; i + 1 < path_vector.size(); ++i) {
         int weight = g.weight(path_vector[i], path_vector[i + 1]);
-        if (!weight) {
-            throw std::invalid_argument("Edge not found " + std::to_string(i) + " -> " + std::to_string(i + 1));
-        }
+        if (!weight) return INF;
         path_weight += weight;
     }
     return path_weight;
 }
-
-//WORK IN PROGRESS
-//std::vector<int> finishRemaining () {}
