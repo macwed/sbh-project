@@ -1,12 +1,11 @@
 //
 // Created by maciej on 05.05.25.
 //
-#include "dijkstra.hpp"
+#include "common/dijkstra.hpp"
 
 #include <algorithm>
 #include <queue>
-
-#include "graph.hpp"
+#include "common/graph.hpp"
 
 using Pair = std::pair<int, int>;
 
@@ -132,59 +131,61 @@ std::pair<std::vector<int>, std::vector<int>> dijkstraAll (const graph::Graph& g
     return {dist, prev};
 }
 
+int findClosestUnvisited (const std::vector<int>& candidates, const std::vector<int>& dist) {
+    int best_u = -1, best_dist = INF;
 
-void finishRemaining (std::vector<int>& path, const graph::Graph& g,
-                        std::vector<char>& visited, double finish_ratio) {
+    for (int u : candidates) {
+        if (dist[u] < best_dist) {
+            best_u = u;
+            best_dist = dist[u];
+        }
+    }
+    return best_u;
+}
 
-    int n = g.size();
+std::vector<int> reconstructPath (int target, const std::vector<int>& prev) {
+    std::vector<int> path;
+    for (int at = target; at != -1; at = prev[at]) {
+        path.push_back(at);
+    }
+    std::ranges::reverse(path);
+    return path;
+}
+
+std::vector<int> getUnvisited (const std::vector<char>& visited) {
+    std::vector<int> result;
+    for (int i = 0; i < static_cast<int>(visited.size()); ++i) {
+        if (!visited[i]) result.push_back(i);
+    }
+    return result;
+}
+
+void finishRemaining (std::vector<int>& path, const graph::Graph& g, int& visited_count, std::vector<char>& visited) {
+
     int current = path.back();
 
     while (true) {
-        std::vector<int> remaining;
-        for (int i = 0; i < n; ++i)
-            if (!visited[i])
-                remaining.push_back(i);
+        std::vector<int> remaining = getUnvisited(visited);
         if (remaining.empty()) break;
 
-        int visited_count = static_cast<int>(std::ranges::count(visited, true));
-        if (static_cast<double> (visited_count) / n >= finish_ratio) break;
-
-        //try to find path through all remaining unvisited nodes only
         auto [dist, prev] = dijkstraAll(g, current, visited);
+        int best_u = findClosestUnvisited(remaining, dist);
 
-        int best_u = -1;
-        int best_dist = INF;
-        for (int u : remaining) {
-            if (dist[u] < best_dist) {
-                best_dist = dist[u];
-                best_u = u;
-            }
-        }
-
-        //can't find path through unvisited nodes - run Dijkstra algorithm including visited nodes
-        if (best_u == -1 || best_dist == INF) {
+        if (best_u == -1 || dist[best_u] == INF) {
             std::tie(dist, prev) = dijkstraAll(g, current);
-            for (int u : remaining) {
-                if (dist[u] < best_dist) {
-                    best_dist = dist[u];
-                    best_u = u;
-                }
-            }
+            best_u = findClosestUnvisited(remaining, dist);
         }
-        if (best_u == -1 || best_dist == INF) break;
 
-        std::vector<int> subpath;
-        for (int v = best_u; v != -1; v = prev[v]) {
-            subpath.push_back(v);
-        }
-        std::ranges::reverse(subpath);
+        if (best_u == -1 || dist[best_u] == INF) break; // IN THE MIDDLE OF NOWHERE ! IT'S OVER!
 
+        std::vector<int> subpath = reconstructPath(best_u, prev);
         for (size_t i = 1; i < subpath.size(); ++i) {
             int v = subpath[i];
-            path.push_back(v);
             visited[v] = true;
+            ++visited_count;
+            path.push_back(v);
         }
 
-        current = path.back();
+        current = best_u;
     }
 }

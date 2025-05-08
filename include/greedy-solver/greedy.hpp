@@ -6,13 +6,16 @@
 #define GREEDY_HPP
 #include <vector>
 
-#include "graph.hpp"
+#include "common/graph.hpp"
 
 std::vector<int> greedySolver(const graph::Graph& g, int start);
 
 int computePathWeight(const graph::Graph& g, const std::vector<int>& path_vector);
 
-std::vector<int> unvisitedNeighbors(const graph::Graph& g, int u, int weight, const std::vector<char>& visited);
+void selectCandidates(const graph::Graph& g, int current, int weight, std::vector<int>& candidates, const std::vector<char>& visited);
 
+int stepBack (std::vector<int>& path, int& dead_end);
+
+bool isDeadEnd (const graph::Graph& g, int u);
 
 #endif //GREEDY_HPP

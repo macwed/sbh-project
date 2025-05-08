@@ -21,7 +21,7 @@ namespace io {
         file.close();
     }
 
-    void io::readSpectrumFromFile(const std::string& filename, int& n, int& k, int& negErr, int& posErr, std::vector<std::string>& spectrum) {
+    void readSpectrumFromFile(const std::string& filename, int& n, int& k, int& negErr, int& posErr, std::vector<std::string>& spectrum) {
         std::ifstream file(filename);
         if (!file.is_open()) {
             throw std::runtime_error("Nie mozna otworzyc pliku z danymi spektrum: " + filename);

@@ -2,7 +2,7 @@
 // Created by maciej on 22.04.25.
 //
 
-#include "graph.hpp"
+#include "common/graph.hpp"
 
 #include <algorithm>
 #include <vector>

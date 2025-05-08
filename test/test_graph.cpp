@@ -5,7 +5,7 @@
 #include <cassert>
 #include <vector>
 #include <string>
-#include "graph.hpp"
+#include "common/graph.hpp"
 
 int main() {
     std::vector<std::string> spec = {"ABCDE", "BCDEB", "CDEBA", "DEBAA"};
