@@ -26,6 +26,15 @@ target_include_directories(common
 )
 # target_link_libraries(common PUBLIC OpenMP::OpenMP_CXX)
 
+# —————— Greedy Solver ——————
+add_library(greedy_solver STATIC
+        src/greedy-solver/greedy.cpp
+)
+target_include_directories(greedy_solver PUBLIC
+        ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(greedy_solver PUBLIC common)
+
 # —————— Generator ——————
 add_executable(generator
         src/generator/main.cpp
@@ -48,24 +57,6 @@ set_target_properties(generator PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
 )
 
-# —————— Greedy Solver ——————
-add_executable(greedy_solver
-        src/greedy-solver/greedy.cpp
-        include/greedy-solver/greedy.hpp
-
-)
-target_include_directories(greedy_solver
-        PRIVATE
-        ${PROJECT_SOURCE_DIR}/include
-)
-target_link_libraries(greedy_solver
-        PRIVATE
-        common
-)
-set_target_properties(greedy_solver PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
-)
-
 # —————— Tests ——————
 enable_testing()
 
@@ -78,3 +69,19 @@ target_include_directories(test_graph
         ${PROJECT_SOURCE_DIR}/include
 )
 add_test(NAME GraphTest COMMAND test_graph)
+
+add_executable(test_greedy_manual
+        test/test_greedy_manual.cpp
+        src/generator/io.cpp
+)
+
+target_include_directories(test_greedy_manual PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+)
+
+target_link_libraries(test_greedy_manual PRIVATE
+        common
+        greedy_solver
+)
+
+add_test(NAME GreedyTest COMMAND test_greedy_manual)

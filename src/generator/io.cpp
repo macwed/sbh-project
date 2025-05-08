@@ -21,6 +21,22 @@ namespace io {
         file.close();
     }
 
+    void readSpectrumFromFile(const std::string& filename, int& n, int& k, int& negErr, int& posErr, std::vector<std::string>& spectrum) {
+        std::ifstream file(filename);
+        if (!file.is_open()) {
+            throw std::runtime_error("Nie mozna otworzyc pliku z danymi spektrum: " + filename);
+        }
+
+        file >> n >> k >> negErr >> posErr;
+
+        std::string line;
+        while (file >> line) {
+            spectrum.emplace_back(line);
+        }
+
+        file.close();
+    }
+
     void writeToFileSequence(const std::string& main_sequence, const std::string& filepath) {
         std::string filename = filepath + std::to_string(main_sequence.size()) + "_seq.txt";
         std::ofstream file2(filename);
