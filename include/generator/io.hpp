@@ -12,6 +12,8 @@ namespace io {
 
     void readFromFile(const std::string& filename, std::string& main_sequence);
 
+    void readSpectrumFromFile(const std::string& filename, int& n, int& k, int& negErr, int& posErr, std::vector<std::string>& spectrum);
+
     void writeToFileSpectrum(const vs& spectrum, int n, int k, int negative_errors,
                                 int positive_errors, const std::string& filepath);
 
