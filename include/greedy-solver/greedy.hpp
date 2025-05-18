@@ -4,18 +4,25 @@
 
 #ifndef GREEDY_HPP
 #define GREEDY_HPP
+#include <random>
 #include <vector>
 
 #include "common/graph.hpp"
 
-std::vector<int> greedySolver(const graph::Graph& g, int start);
+using graph::Graph;
+using Int_vec = std::vector<int>;
+using Bool_vec = std::vector<char>;
 
-int computePathWeight(const graph::Graph& g, const std::vector<int>& path_vector);
+Int_vec greedySolver(const Graph& g, int start);
 
-void selectCandidates(const graph::Graph& g, int current, int weight, std::vector<int>& candidates, const std::vector<char>& visited);
+int computePathWeight(const Graph& g, const Int_vec& path_vector);
 
-int stepBack (std::vector<int>& path, int& dead_end);
+int stepBack (Int_vec& path, int& dead_end);
 
-bool isDeadEnd (const graph::Graph& g, int u);
+bool isDeadEnd (const Graph& g, int u);
+
+void goWeightOne(Int_vec& path, const Graph& g, Bool_vec& visited, int& visited_cnt);
+
+std::vector<int> getNextCandidates(const Graph& g, int current_node, const Bool_vec& visited, std::mt19937_64& rng);
 
 #endif //GREEDY_HPP
