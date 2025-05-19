@@ -12,12 +12,13 @@
 #include "common/graph.hpp"
 #include "common/dijkstra.hpp"
 
-static constexpr int CAND_NUM = 8;
+static constexpr int CAND_RATIO = 5;
+static constexpr int MAX_LOOPS = 50;
 //static constexpr int NUM_CANDIDATES_RESELECT = 5;
 static constexpr double TOLERANCE = 1.2;
 static constexpr double FINISH_RATIO = 0.95;
-static constexpr int STEP_BACKS = 10;
-static constexpr int RESELECT = 8;
+static constexpr int STEP_BACKS = 8;
+static constexpr int RESELECT = 5;
 
 using graph::Graph;
 using Int_vec = std::vector<int>;
@@ -111,7 +112,7 @@ std::vector<int> greedySolver(Graph& g, int start, const Str_vec& spectrum, int 
     int visited_count = 1;
     path.emplace_back(current);
     std::mt19937_64 rng(std::random_device{}());
-    //int dead_end = -1;
+    int loops = 0;
 
     while (true) {
         if (allVisited(visited_count, n)
@@ -123,15 +124,17 @@ std::vector<int> greedySolver(Graph& g, int start, const Str_vec& spectrum, int 
         current = path.back();
 
         Int_vec been_there;
-        if (isDeadEnd(g, current))
+        if (isDeadEnd(g, current) && loops < MAX_LOOPS) {
             std::cout << "First stepback!" << std::endl;
             current = backToBranchedW1(g, path, visited, been_there, visited_count);
+        }
 
-        if (current == -1)
+        if (current == -1 && loops < MAX_LOOPS) {
             std::cout << "Second stepback!" << std::endl;
             current = backToBranched(g, path, visited, been_there, visited_count);
+        }
 
-        if (current == -1) {
+        if (current == -1 || (isDeadEnd(g, current) && loops >= MAX_LOOPS)) {
             std::cout << "Virtual Edge!" << std::endl;
             current = path.back();
             addVirtualEdge(g, spectrum, current, 4, rng, visited);
@@ -145,9 +148,9 @@ std::vector<int> greedySolver(Graph& g, int start, const Str_vec& spectrum, int 
         while (cnt_reselect < RESELECT) {
             Int_vec candidates;
             if (shouldSkipDeadEnd(visited_count, n, positive_errors))
-                candidates = getNextCandidates(g, current, visited, rng, been_there);
+                candidates = getNextCandidates(g, current, visited, rng, been_there, visited_count);
             else
-                candidates = getNextCandidates(g, current, visited, rng);
+                candidates = getNextCandidates(g, current, visited, rng, visited_count);
 
             for (const auto& candidate : candidates) {
                 auto sp = dijkstraPath(g, current, candidate, visited);
@@ -191,6 +194,7 @@ std::vector<int> greedySolver(Graph& g, int start, const Str_vec& spectrum, int 
             ++visited_count;
             path.emplace_back(u);
         }
+        loops++;
     }
 
     return path;
@@ -311,10 +315,11 @@ void goWeightOne(Int_vec& path, const Graph& g, Bool_vec& visited, int& visited_
     }
 }
 //get candidates for Dijkstra path
-Int_vec getNextCandidates(const Graph& g, int current_node, const Bool_vec& visited, std::mt19937_64& rng) {
+Int_vec getNextCandidates(const Graph& g, int current_node, const Bool_vec& visited, std::mt19937_64& rng, int visited_count) {
 
     Int_vec nextCandidates;
-    nextCandidates.reserve(CAND_NUM);
+    int cand_num = (static_cast<int>(g.size()) - visited_count) / CAND_RATIO;
+    nextCandidates.reserve(cand_num);
     for (const auto &v1: g.neighbors(current_node) | std::views::keys) {
         if (visited[v1]) continue;
         bool allNeighborsUnvisited = true;
@@ -326,7 +331,7 @@ Int_vec getNextCandidates(const Graph& g, int current_node, const Bool_vec& visi
         }
         if (allNeighborsUnvisited) nextCandidates.push_back(v1);
     }
-    if (nextCandidates.size() >= CAND_NUM) return nextCandidates;
+    if (nextCandidates.size() >= cand_num) return nextCandidates;
 
     Int_vec unvisited;
     unvisited.reserve(visited.size());
@@ -335,16 +340,17 @@ Int_vec getNextCandidates(const Graph& g, int current_node, const Bool_vec& visi
     std::ranges::shuffle(unvisited, rng);
     for (auto u : unvisited) {
         nextCandidates.push_back(u);
-        if (nextCandidates.size() >= CAND_NUM) return nextCandidates;
+        if (nextCandidates.size() >= cand_num) return nextCandidates;
     }
     return nextCandidates;
 }
 //get candidates for Dijkstra path but ignore last dead-end path
 Int_vec getNextCandidates (const Graph& g, int current_node,
-    const Bool_vec& visited, std::mt19937_64& rng, const Int_vec& returned_from) {
+    const Bool_vec& visited, std::mt19937_64& rng, const Int_vec& returned_from, int visited_count) {
 
     Int_vec nextCandidates;
-    nextCandidates.reserve(CAND_NUM);
+    int cand_num = (static_cast<int>(g.size()) - visited_count) / CAND_RATIO;
+    nextCandidates.reserve(cand_num);
     for (const auto &v1: g.neighbors(current_node) | std::views::keys) {
         if (visited[v1] || std::ranges::find(returned_from, v1) != returned_from.end()) continue;
         bool allNeighborsUnvisited = true;
@@ -356,7 +362,7 @@ Int_vec getNextCandidates (const Graph& g, int current_node,
         }
         if (allNeighborsUnvisited) nextCandidates.push_back(v1);
     }
-    if (nextCandidates.size() >= CAND_NUM) return nextCandidates;
+    if (nextCandidates.size() >= cand_num) return nextCandidates;
 
     Int_vec unvisited;
     unvisited.reserve(visited.size());
@@ -365,7 +371,7 @@ Int_vec getNextCandidates (const Graph& g, int current_node,
     std::ranges::shuffle(unvisited, rng);
     for (auto u : unvisited) {
         nextCandidates.push_back(u);
-        if (nextCandidates.size() >= CAND_NUM) return nextCandidates;
+        if (nextCandidates.size() >= cand_num) return nextCandidates;
     }
     return nextCandidates;
 }

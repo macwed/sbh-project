@@ -28,9 +28,9 @@ bool isDeadEnd(const Graph& g, int u);
 
 void goWeightOne(Int_vec& path, const Graph& g, Bool_vec& visited, int& visited_cnt);
 
-Int_vec getNextCandidates(const Graph& g, int current_node, const Bool_vec& visited, std::mt19937_64& rng);
+Int_vec getNextCandidates(const Graph& g, int current_node, const Bool_vec& visited, std::mt19937_64& rng, int visited_count);
 
 Int_vec getNextCandidates (const Graph& g, int current_node,
-    const Bool_vec& visited, std::mt19937_64& rng, const Int_vec& returned_from);
+    const Bool_vec& visited, std::mt19937_64& rng, const Int_vec& returned_from, int visited_count);
 
 #endif //GREEDY_HPP
