@@ -37,7 +37,7 @@ int main() {
     graph::Graph g;
     g.build(spectrum);
 
-    std::vector<int> path = greedySolver(g, 0);  // jaki będzie primer?
+    std::vector<int> path = greedySolver(g, 0, spectrum, pos, neg);  // jaki będzie primer?
 
     std::vector<char> visited(g.size(), false);
     for (int v : path) visited[v] = true;
