@@ -12,17 +12,25 @@
 using graph::Graph;
 using Int_vec = std::vector<int>;
 using Bool_vec = std::vector<char>;
+using Str_vec = std::vector<std::string>;
 
-Int_vec greedySolver(const Graph& g, int start);
+std::vector<int> greedySolver(Graph& g, int start, const Str_vec& spectrum, int positive_errors, int negative_errors);
 
 int computePathWeight(const Graph& g, const Int_vec& path_vector);
 
 int stepBack (Int_vec& path, int& dead_end);
 
-bool isDeadEnd (const Graph& g, int u);
+int backToBranched (const Graph& g, Int_vec& path, Bool_vec& visited, Int_vec& returned_from, int& visited_count);
+
+int backToBranchedW1(const Graph& g, Int_vec& path, Bool_vec& visited, Int_vec& returned_from, int& visited_count);
+
+bool isDeadEnd(const Graph& g, int u);
 
 void goWeightOne(Int_vec& path, const Graph& g, Bool_vec& visited, int& visited_cnt);
 
-std::vector<int> getNextCandidates(const Graph& g, int current_node, const Bool_vec& visited, std::mt19937_64& rng);
+Int_vec getNextCandidates(const Graph& g, int current_node, const Bool_vec& visited, std::mt19937_64& rng);
+
+Int_vec getNextCandidates (const Graph& g, int current_node,
+    const Bool_vec& visited, std::mt19937_64& rng, const Int_vec& returned_from);
 
 #endif //GREEDY_HPP
