@@ -58,30 +58,22 @@ set_target_properties(generator PROPERTIES
 )
 
 # —————— Tests ——————
+Include(FetchContent)
+
+FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG v3.8.1
+)
+FetchContent_MakeAvailable(Catch2)
+
 enable_testing()
 
-add_executable(test_graph
-        test/test_graph.cpp
-        src/common/graph.cpp
-)
-target_include_directories(test_graph
-        PRIVATE
-        ${PROJECT_SOURCE_DIR}/include
-)
-add_test(NAME GraphTest COMMAND test_graph)
+add_executable(test_graph_catch test/test_graph.cpp)
+target_link_libraries(test_graph_catch PRIVATE Catch2::Catch2WithMain common)
+add_test(NAME GraphTests COMMAND test_graph_catch)
 
-add_executable(test_greedy_manual
-        test/test_greedy_manual.cpp
-        src/generator/io.cpp
-)
 
-target_include_directories(test_greedy_manual PRIVATE
-        ${PROJECT_SOURCE_DIR}/include
-)
-
-target_link_libraries(test_greedy_manual PRIVATE
-        common
-        greedy_solver
-)
-
-add_test(NAME GreedyTest COMMAND test_greedy_manual)
+add_executable(test_greedy_catch test/test_greedy.cpp src/generator/io.cpp)
+target_link_libraries(test_greedy_catch PRIVATE Catch2::Catch2WithMain common greedy_solver)
+add_test(NAME GreedyTests COMMAND test_greedy_catch)
